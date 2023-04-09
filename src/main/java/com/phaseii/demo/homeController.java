@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -31,6 +32,7 @@ import net.minidev.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.LinkedList;
 
 
 
@@ -73,7 +75,7 @@ public class homeController {
 	    @GetMapping("dashboard")
 		public String enter_dashboard(Model m) {
 	    	try {
-	    	System.out.println(obj.getBudget()+" "+obj.getBudget());
+	    	System.out.println(obj.getBudget()+" "+obj.getExpense());
 	    	m.addAttribute("budget", obj.getBudget() );
 	    	m.addAttribute("expense", obj.getExpense());
 			return "dashboard";}
@@ -91,7 +93,7 @@ public class homeController {
 		 
 		 
 		 try {
-			 System.out.println("start verification +++++++++++++++++++");
+			 
 		 model obj = resttemplate.getForObject("http://localhost:8091/rest/"+email, model.class);
 		 System.out.println(obj.toString());
 		 System.out.println(email+" = "+obj.getDmail());
@@ -118,7 +120,7 @@ public class homeController {
 		    HttpEntity<String> request = 
 		    	      new HttpEntity<String>(personJsonObject.toString(), headers);
 		    
-		    model obj = 
+		     obj = 
 		    	      resttemplate.postForObject("http://localhost:8091/rest", request, model.class);
 		    
 		    
@@ -137,13 +139,14 @@ public class homeController {
 			 return "redirect:/dashboard";
 		 }
 		 
-		 System.out.println("here-----------------1");
+		
 		 
+		
 		 JSONObject personJsonObject = new JSONObject();
 		    HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(MediaType.APPLICATION_JSON);
 			
-			System.out.println("here-----------------2");
+			
 		   
 		    personJsonObject.put("email", obj.getDmail());
 		    personJsonObject.put("name", obj.getName());
@@ -152,21 +155,15 @@ public class homeController {
 		    personJsonObject.put("date", obj.getDate().toString());
 		    personJsonObject.put("budget", obj.getBudget());
 		    
-		    System.out.println("here-----------------3");
-		    
-		    RestTemplate resttemplate = new RestTemplate();
+		   RestTemplate resttemplate = new RestTemplate();
 			 obj = resttemplate.getForObject("http://localhost:8091/rest/"+obj.getDmail(), model.class);
-			 
-			 System.out.println("here-----------------4");
-			 
+		
 			 if(expenses>obj.getBudget()) {
 				 //m.addAttribute("message", "budget exceeded");
 				 return "redirect:/dashboard";
 			 }
 			 
-			 System.out.println("here-----------------5");
 		    personJsonObject.put("expense", expenses+obj.getExpense());
-		    System.out.println("here-----------------6");
 		    
 		    HttpEntity<String> request = 
 		    	      new HttpEntity<String>(personJsonObject.toString(), headers);
@@ -175,8 +172,15 @@ public class homeController {
 		 
 		 System.out.println("here-----------------7");
 		 
-		model obj = 
+		 obj = 
 	    	      resttemplate.postForObject("http://localhost:8091/rest", request, model.class);
+		 //service_2
+		 System.out.println("here-----------------8");
+		 try {
+		 service2(expenses);}
+		 catch(Exception e) {
+			 
+		 }
 		 return "redirect:/dashboard";
 	 }
 	 
@@ -215,6 +219,56 @@ public class homeController {
 		}
 		
 		 return "redirect:/setbudget";
+	 }
+	 
+	 public void service2(int expenses) {
+		 
+		 JSONObject personJsonObject = new JSONObject();
+		    HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(MediaType.APPLICATION_JSON);
+			
+			System.out.println(obj.getDmail());
+			System.out.println(obj.getName());
+			System.out.println(java.time.LocalDate.now());
+			System.out.println(obj.getBudget());
+			System.out.println(expenses);
+		   
+		    personJsonObject.put("mail", obj.getDmail());
+		    personJsonObject.put("name", obj.getName());
+		    personJsonObject.put("date", java.time.LocalDate.now().toString());
+		    personJsonObject.put("budget", obj.getBudget());
+		    personJsonObject.put("expense", expenses);
+		    
+		    HttpEntity<String> request = 
+		    	      new HttpEntity<String>(personJsonObject.toString(), headers);
+		    RestTemplate resttemplate = new RestTemplate();
+		    
+		    System.out.println("here------------10");
+		    
+ Service2_model obj_0 =      resttemplate.postForObject("http://localhost:8092/rest_2", request, Service2_model.class);
+		 
+	 }
+	 
+	 @GetMapping("getexpense")
+	 public ModelAndView get_budget(@RequestParam("date") String date) {
+		 
+		 ModelAndView mv = new ModelAndView();
+		 mv.setViewName("dashboard");
+		 mv.addObject("message","not found");
+		 
+		 RestTemplate resttemplate = new RestTemplate();
+		 
+		Service2_model[] entity  =  resttemplate.getForObject("http://localhost:8092/find/bharathiselvan451@gmail.com", Service2_model[].class);
+		
+		for(Service2_model x : entity) {
+			if(x.getDate().toString().equals(date)) {
+				 mv.addObject("message","you spent "+x.getExpense()+" on "+date);
+			}
+		}
+		mv.addObject("budget", obj.getBudget() );
+    	mv.addObject("expense", obj.getExpense());
+		 return mv;
+		 
 	 }
 	    
 	    

@@ -1,4 +1,6 @@
 .expense{
+	margin-left: auto;
+	margin-right: auto;
     color: white;
     background: #B2D3C2;
     position: absolute;
@@ -7,7 +9,19 @@
     transform: translate(-50%, -50%);
 }
 .inline{
+	margin-left: auto;
+	margin-right: auto;
     color: white;
+    background: #B2D3C2;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, 300%);
+}
+.finddate{
+	margin-left: auto;
+	margin-right: auto;
+	 color: white;
     background: #B2D3C2;
     position: absolute;
     top: 50%;

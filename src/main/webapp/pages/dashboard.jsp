@@ -60,6 +60,8 @@
             
             <div class="col py-3" style="background-color:black">
             <h3 style="color:white; text-align: center;">Welcome Back! Here are your expenses: budget = ${budget}  current expense = ${expense}</h3>
+            <h4 style="color:white; text-align: center;">${message}</h4>
+            
                 <form action="setexpense" class="expense" method="post">
                     <label for="expense">TODAYS EXPENSES:</label><br>
                     <input type="text" id="fname" name="TExpenses"><br>
@@ -67,6 +69,18 @@
                 </form>
                 <form action="setbudget" class="inline">
                     <button class="float-left submit-button" >set budget</button>
+                </form>
+                <form style="margin-left: auto;
+	margin-right: auto;
+    color: white;
+    
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, 650%);" action="getexpense"  class="finddate">
+                     <label style="color:white; text-align: center;">Enter date</label>
+                     <input type="date" id="date" name="date">
+                     <button type="submit">ENTER</button>
                 </form>
             </div>
         </div>
